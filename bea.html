@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mini Padlet</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    #noteForm {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    #noteInput {
+      width: 300px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #addNoteBtn {
+      margin-left: 10px;
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .board {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .note {
+      background: yellow;
+      padding: 15px;
+      border-radius: 8px;
+      width: 200px;
+      min-height: 100px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .delete {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Mini Padlet</h1>
+  <form id="noteForm">
+    <input type="text" id="noteInput" placeholder="Write a note..." />
+    <button id="addNoteBtn">Add</button>
+  </form>
+  <div class="board" id="board"></div>
+
+  <script>
+    const form = document.getElementById('noteForm');
+    const input = document.getElementById('noteInput');
+    const board = document.getElementById('board');
+
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+    function saveNotes() {
+      localStorage.setItem('notes', JSON.stringify(notes));
+    }
+
+    function renderNotes() {
+      board.innerHTML = '';
+      notes.forEach((note, index) => {
+        const div = document.createElement('div');
+        div.className = 'note';
+        div.innerHTML = `
+          ${note}
+          <button class="delete" onclick="deleteNote(${index})">x</button>
+        `;
+        board.appendChild(div);
+      });
+    }
+
+    function deleteNote(index) {
+      notes.splice(index, 1);
+      saveNotes();
+      renderNotes();
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (text) {
+        notes.push(text);
+        input.value = '';
+        saveNotes();
+        renderNotes();
+      }
+    });
+
+    renderNotes();
+  </script>
+</body>
+</html>
